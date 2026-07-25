@@ -25,6 +25,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     if (folderId === activeFolderId) router.push("/");
   };
 
+  const handleEditFolder = (folderId: string, name: string) => {
+    setFolders((prev) =>
+      prev.map((folder) => (folder.id === folderId ? { ...folder, name } : folder)),
+    );
+  };
+
   return (
     <div className="flex flex-1 flex-col bg-white dark:bg-[#191919]">
       <Header onCreateFolder={handleCreateFolder} />
@@ -33,6 +39,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           folders={folders}
           activeFolderId={activeFolderId}
           onDeleteFolder={handleDeleteFolder}
+          onEditFolder={handleEditFolder}
         />
         <main
           className={

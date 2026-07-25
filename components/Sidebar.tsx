@@ -5,20 +5,33 @@ import Link from "next/link";
 import type { Folder } from "@/app/_lib/types";
 import FolderItem from "./FolderItem";
 import DeleteFolderModal from "./DeleteFolderModal";
+import EditFolderModal from "./EditFolderModal";
 
 type SidebarProps = {
   folders: Folder[];
   activeFolderId?: string;
   onDeleteFolder?: (folderId: string) => void;
+  onEditFolder?: (folderId: string, name: string) => void;
 };
 
-export default function Sidebar({ folders, activeFolderId = "all", onDeleteFolder }: SidebarProps) {
+export default function Sidebar({
+  folders,
+  activeFolderId = "all",
+  onDeleteFolder,
+  onEditFolder,
+}: SidebarProps) {
   const [folderToDelete, setFolderToDelete] = useState<Folder | null>(null);
+  const [folderToEdit, setFolderToEdit] = useState<Folder | null>(null);
   const isAllActive = activeFolderId === "all";
 
   const handleConfirmDelete = () => {
     if (folderToDelete) onDeleteFolder?.(folderToDelete.id);
     setFolderToDelete(null);
+  };
+
+  const handleSaveEdit = (name: string) => {
+    if (folderToEdit) onEditFolder?.(folderToEdit.id, name);
+    setFolderToEdit(null);
   };
 
   return (
@@ -39,6 +52,7 @@ export default function Sidebar({ folders, activeFolderId = "all", onDeleteFolde
             key={folder.id}
             folder={folder}
             isActive={folder.id === activeFolderId}
+            onEditClick={setFolderToEdit}
             onDeleteClick={setFolderToDelete}
           />
         ))}
@@ -48,6 +62,13 @@ export default function Sidebar({ folders, activeFolderId = "all", onDeleteFolde
           folder={folderToDelete}
           onClose={() => setFolderToDelete(null)}
           onConfirm={handleConfirmDelete}
+        />
+      )}
+      {folderToEdit && (
+        <EditFolderModal
+          folder={folderToEdit}
+          onClose={() => setFolderToEdit(null)}
+          onSave={handleSaveEdit}
         />
       )}
     </aside>
