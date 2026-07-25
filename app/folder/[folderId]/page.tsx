@@ -1,7 +1,5 @@
-import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
 import LinkGrid from "@/components/LinkGrid";
-import { folders, links } from "@/app/_lib/mock-data";
+import { links } from "@/app/_lib/mock-data";
 
 export default async function FolderPage({
   params,
@@ -11,15 +9,5 @@ export default async function FolderPage({
   const { folderId } = await params;
   const folderLinks = links.filter((link) => link.folderId === folderId);
 
-  return (
-    <div className="flex flex-1 flex-col bg-white dark:bg-[#191919]">
-      <Header />
-      <div className="flex flex-1">
-        <Sidebar folders={folders} activeFolderId={folderId} />
-        <main className="flex-1 overflow-y-auto px-8 py-8">
-          <LinkGrid links={folderLinks} />
-        </main>
-      </div>
-    </div>
-  );
+  return <LinkGrid links={folderLinks} />;
 }
