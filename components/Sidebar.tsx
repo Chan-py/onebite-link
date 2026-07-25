@@ -11,13 +11,13 @@ export default function Sidebar({ folders, activeFolderId = "all" }: SidebarProp
   const isAllActive = activeFolderId === "all";
 
   return (
-    <aside className="flex w-56 shrink-0 flex-col gap-1 border-r border-zinc-200 px-3 py-6 dark:border-zinc-800">
+    <aside className="flex w-60 shrink-0 flex-col gap-1 border-r border-[rgba(55,53,47,0.09)] bg-[#F7F6F3] px-3 py-6 dark:border-[rgba(255,255,255,0.09)] dark:bg-[#202020]">
       <Link
         href="/"
-        className={`rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors ${
+        className={`rounded-md px-3 py-1.5 text-left text-sm font-medium transition-colors duration-150 ease-in-out ${
           isAllActive
-            ? "bg-zinc-900 text-white dark:bg-zinc-50 dark:text-zinc-900"
-            : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-900"
+            ? "bg-[#2F3437] text-white dark:bg-[#E9E9E7] dark:text-[#2F3437]"
+            : "text-[rgba(55,53,47,0.65)] hover:bg-[#EDEDEB] dark:text-[rgba(255,255,255,0.6)] dark:hover:bg-[#2A2A2A]"
         }`}
       >
         All

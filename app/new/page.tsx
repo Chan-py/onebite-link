@@ -5,7 +5,7 @@ import { folders } from "../_lib/mock-data";
 
 export default function NewLinkPage() {
   return (
-    <div className="flex flex-1 flex-col bg-zinc-50 dark:bg-black">
+    <div className="flex flex-1 flex-col bg-white dark:bg-[#191919]">
       <Header />
       <div className="flex flex-1">
         <Sidebar folders={folders} />

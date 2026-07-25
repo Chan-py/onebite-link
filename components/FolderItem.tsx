@@ -10,10 +10,10 @@ export default function FolderItem({ folder, isActive = false }: FolderItemProps
   return (
     <Link
       href={`/folder/${folder.id}`}
-      className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+      className={`flex w-full items-center justify-between rounded-md px-3 py-1.5 text-left text-sm transition-colors duration-150 ease-in-out ${
         isActive
-          ? "bg-zinc-900 text-white dark:bg-zinc-50 dark:text-zinc-900"
-          : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-900"
+          ? "bg-[#2F3437] text-white dark:bg-[#E9E9E7] dark:text-[#2F3437]"
+          : "text-[rgba(55,53,47,0.65)] hover:bg-[#EDEDEB] dark:text-[rgba(255,255,255,0.6)] dark:hover:bg-[#2A2A2A]"
       }`}
     >
       <span className="flex items-center gap-2">
@@ -23,8 +23,8 @@ export default function FolderItem({ folder, isActive = false }: FolderItemProps
       <span
         className={`text-xs ${
           isActive
-            ? "text-zinc-300 dark:text-zinc-600"
-            : "text-zinc-400 dark:text-zinc-600"
+            ? "text-white/60 dark:text-[#2F3437]/60"
+            : "text-[rgba(55,53,47,0.4)] dark:text-[rgba(255,255,255,0.4)]"
         }`}
       >
         {folder.count}
@@ -39,7 +39,9 @@ function FolderIcon({ isActive }: { isActive: boolean }) {
       viewBox="0 0 20 20"
       fill="currentColor"
       className={`h-4 w-4 shrink-0 ${
-        isActive ? "text-white dark:text-zinc-900" : "text-zinc-400 dark:text-zinc-600"
+        isActive
+          ? "text-white dark:text-[#2F3437]"
+          : "text-[rgba(55,53,47,0.4)] dark:text-[rgba(255,255,255,0.4)]"
       }`}
       aria-hidden="true"
     >

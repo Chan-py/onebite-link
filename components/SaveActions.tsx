@@ -2,16 +2,16 @@ import Link from "next/link";
 
 export default function SaveActions() {
   return (
-    <div className="flex items-center justify-end gap-2 border-t border-zinc-200 pt-5 dark:border-zinc-800">
+    <div className="flex items-center justify-end gap-2 border-t border-[rgba(55,53,47,0.09)] pt-5 dark:border-[rgba(255,255,255,0.09)]">
       <Link
         href="/"
-        className="rounded-full px-4 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-900"
+        className="rounded-md px-4 py-2 text-sm font-medium text-[rgba(55,53,47,0.65)] transition-colors duration-150 ease-in-out hover:bg-[#F1F1EF] dark:text-[rgba(255,255,255,0.6)] dark:hover:bg-[#2A2A2A]"
       >
         취소
       </Link>
       <button
         type="submit"
-        className="rounded-full bg-zinc-900 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
+        className="rounded-md bg-[#2F3437] px-4 py-2 text-sm font-medium text-white transition-colors duration-150 ease-in-out hover:bg-[#454341] dark:bg-[#E9E9E7] dark:text-[#2F3437] dark:hover:bg-[#c9c9c7]"
       >
         저장
       </button>
