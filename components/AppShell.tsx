@@ -4,7 +4,7 @@ import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import type { Folder, LinkItem } from "@/app/_lib/types";
 import { folders as initialFolders, links as initialLinks } from "@/app/_lib/mock-data";
-import { AppDataProvider, type CreateLinkInput } from "./AppDataContext";
+import { AppDataProvider, type CreateLinkInput, type EditLinkInput } from "./AppDataContext";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 
@@ -56,6 +56,21 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const handleEditLink = (linkId: string, updates: EditLinkInput) => {
+    const target = links.find((link) => link.id === linkId);
+    setLinks((prev) => prev.map((link) => (link.id === linkId ? { ...link, ...updates } : link)));
+
+    if (target && target.folderId !== updates.folderId) {
+      setFolders((prev) =>
+        prev.map((folder) => {
+          if (folder.id === target.folderId) return { ...folder, count: Math.max(0, folder.count - 1) };
+          if (folder.id === updates.folderId) return { ...folder, count: folder.count + 1 };
+          return folder;
+        }),
+      );
+    }
+  };
+
   return (
     <div className="flex flex-1 flex-col bg-white dark:bg-[#191919]">
       <Header onCreateFolder={handleCreateFolder} />
@@ -74,7 +89,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           }
         >
           <AppDataProvider
-            value={{ folders, links, createLink: handleCreateLink, deleteLink: handleDeleteLink }}
+            value={{
+              folders,
+              links,
+              createLink: handleCreateLink,
+              deleteLink: handleDeleteLink,
+              editLink: handleEditLink,
+            }}
           >
             {children}
           </AppDataProvider>

@@ -2,10 +2,11 @@ import type { LinkItem } from "@/app/_lib/types";
 
 type LinkCardProps = {
   link: LinkItem;
+  onEditClick?: (link: LinkItem) => void;
   onDeleteClick?: (link: LinkItem) => void;
 };
 
-export default function LinkCard({ link, onDeleteClick }: LinkCardProps) {
+export default function LinkCard({ link, onEditClick, onDeleteClick }: LinkCardProps) {
   const initial = link.tag.charAt(0).toUpperCase();
 
   return (
@@ -46,15 +47,39 @@ export default function LinkCard({ link, onDeleteClick }: LinkCardProps) {
           </div>
         </div>
       </a>
-      <button
-        type="button"
-        onClick={() => onDeleteClick?.(link)}
-        aria-label={`${link.title} 링크 삭제`}
-        className="absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-md border border-[rgba(55,53,47,0.09)] bg-white text-[rgba(55,53,47,0.5)] opacity-0 shadow-[0_1px_2px_rgba(0,0,0,0.08)] transition-opacity duration-150 ease-in-out pointer-events-none group-hover:pointer-events-auto group-hover:opacity-100 hover:bg-[#F1F1EF] hover:text-[#37352F] dark:border-[rgba(255,255,255,0.09)] dark:bg-[#252525] dark:text-[rgba(255,255,255,0.5)] dark:hover:bg-[#2A2A2A] dark:hover:text-[#E9E9E7]"
-      >
-        <TrashIcon />
-      </button>
+      <div className="absolute right-2 top-2 z-10 flex items-center gap-1 opacity-0 transition-opacity duration-150 ease-in-out pointer-events-none group-hover:pointer-events-auto group-hover:opacity-100">
+        <button
+          type="button"
+          onClick={() => onEditClick?.(link)}
+          aria-label={`${link.title} 링크 수정`}
+          className="flex h-7 w-7 items-center justify-center rounded-md border border-[rgba(55,53,47,0.09)] bg-white text-[rgba(55,53,47,0.5)] shadow-[0_1px_2px_rgba(0,0,0,0.08)] transition-colors duration-150 ease-in-out hover:bg-[#F1F1EF] hover:text-[#37352F] dark:border-[rgba(255,255,255,0.09)] dark:bg-[#252525] dark:text-[rgba(255,255,255,0.5)] dark:hover:bg-[#2A2A2A] dark:hover:text-[#E9E9E7]"
+        >
+          <PencilIcon />
+        </button>
+        <button
+          type="button"
+          onClick={() => onDeleteClick?.(link)}
+          aria-label={`${link.title} 링크 삭제`}
+          className="flex h-7 w-7 items-center justify-center rounded-md border border-[rgba(55,53,47,0.09)] bg-white text-[rgba(55,53,47,0.5)] shadow-[0_1px_2px_rgba(0,0,0,0.08)] transition-colors duration-150 ease-in-out hover:bg-[#F1F1EF] hover:text-[#37352F] dark:border-[rgba(255,255,255,0.09)] dark:bg-[#252525] dark:text-[rgba(255,255,255,0.5)] dark:hover:bg-[#2A2A2A] dark:hover:text-[#E9E9E7]"
+        >
+          <TrashIcon />
+        </button>
+      </div>
     </div>
+  );
+}
+
+function PencilIcon() {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      className="h-3.5 w-3.5 shrink-0"
+      aria-hidden="true"
+    >
+      <path d="M13.586 3.586a2 2 0 0 1 2.828 2.828l-.793.793-2.828-2.828.793-.793Z" />
+      <path d="M11.379 4.793 3.5 12.672V15.5h2.828l7.879-7.879-2.828-2.828Z" />
+    </svg>
   );
 }
 

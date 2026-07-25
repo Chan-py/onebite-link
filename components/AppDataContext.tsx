@@ -12,11 +12,18 @@ export type CreateLinkInput = {
   folderId: string;
 };
 
+export type EditLinkInput = {
+  title: string;
+  description: string;
+  folderId: string;
+};
+
 type AppDataContextValue = {
   folders: Folder[];
   links: LinkItem[];
   createLink: (input: CreateLinkInput) => void;
   deleteLink: (linkId: string) => void;
+  editLink: (linkId: string, updates: EditLinkInput) => void;
 };
 
 const AppDataContext = createContext<AppDataContextValue | null>(null);
