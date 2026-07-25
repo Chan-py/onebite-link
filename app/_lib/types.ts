@@ -11,4 +11,5 @@ export type LinkItem = {
   description: string;
   folderId: string;
   tag: string;
+  thumbnail?: string | null;
 };

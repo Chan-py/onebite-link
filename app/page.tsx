@@ -1,6 +1,9 @@
+"use client";
+
 import LinkGrid from "@/components/LinkGrid";
-import { links } from "./_lib/mock-data";
+import { useAppData } from "@/components/AppDataContext";
 
 export default function Home() {
+  const { links } = useAppData();
   return <LinkGrid links={links} />;
 }

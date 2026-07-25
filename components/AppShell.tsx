@@ -2,13 +2,15 @@
 
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import type { Folder } from "@/app/_lib/types";
-import { folders as initialFolders } from "@/app/_lib/mock-data";
+import type { Folder, LinkItem } from "@/app/_lib/types";
+import { folders as initialFolders, links as initialLinks } from "@/app/_lib/mock-data";
+import { AppDataProvider, type CreateLinkInput } from "./AppDataContext";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [folders, setFolders] = useState<Folder[]>(initialFolders);
+  const [links, setLinks] = useState<LinkItem[]>(initialLinks);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -31,6 +33,17 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     );
   };
 
+  const handleCreateLink = (input: CreateLinkInput) => {
+    setLinks((prev) => [{ id: crypto.randomUUID(), ...input }, ...prev]);
+    if (input.folderId) {
+      setFolders((prev) =>
+        prev.map((folder) =>
+          folder.id === input.folderId ? { ...folder, count: folder.count + 1 } : folder,
+        ),
+      );
+    }
+  };
+
   return (
     <div className="flex flex-1 flex-col bg-white dark:bg-[#191919]">
       <Header onCreateFolder={handleCreateFolder} />
@@ -48,7 +61,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               : "flex-1 overflow-y-auto px-8 py-8"
           }
         >
-          {children}
+          <AppDataProvider value={{ folders, links, createLink: handleCreateLink }}>
+            {children}
+          </AppDataProvider>
         </main>
       </div>
     </div>

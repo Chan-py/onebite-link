@@ -1,12 +1,16 @@
-import LinkGrid from "@/components/LinkGrid";
-import { links } from "@/app/_lib/mock-data";
+"use client";
 
-export default async function FolderPage({
+import { use } from "react";
+import LinkGrid from "@/components/LinkGrid";
+import { useAppData } from "@/components/AppDataContext";
+
+export default function FolderPage({
   params,
 }: {
   params: Promise<{ folderId: string }>;
 }) {
-  const { folderId } = await params;
+  const { folderId } = use(params);
+  const { links } = useAppData();
   const folderLinks = links.filter((link) => link.folderId === folderId);
 
   return <LinkGrid links={folderLinks} />;
