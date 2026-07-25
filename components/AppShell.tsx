@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type { Folder } from "@/app/_lib/types";
 import { folders as initialFolders } from "@/app/_lib/mock-data";
 import Header from "./Header";
@@ -10,6 +10,7 @@ import Sidebar from "./Sidebar";
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [folders, setFolders] = useState<Folder[]>(initialFolders);
   const pathname = usePathname();
+  const router = useRouter();
 
   const activeFolderId = pathname.startsWith("/folder/")
     ? pathname.split("/")[2]
@@ -19,11 +20,20 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     setFolders((prev) => [...prev, { id: crypto.randomUUID(), name, count: 0 }]);
   };
 
+  const handleDeleteFolder = (folderId: string) => {
+    setFolders((prev) => prev.filter((folder) => folder.id !== folderId));
+    if (folderId === activeFolderId) router.push("/");
+  };
+
   return (
     <div className="flex flex-1 flex-col bg-white dark:bg-[#191919]">
       <Header onCreateFolder={handleCreateFolder} />
       <div className="flex flex-1">
-        <Sidebar folders={folders} activeFolderId={activeFolderId} />
+        <Sidebar
+          folders={folders}
+          activeFolderId={activeFolderId}
+          onDeleteFolder={handleDeleteFolder}
+        />
         <main
           className={
             pathname === "/new"
