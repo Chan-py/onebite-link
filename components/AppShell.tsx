@@ -44,6 +44,18 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const handleDeleteLink = (linkId: string) => {
+    const target = links.find((link) => link.id === linkId);
+    setLinks((prev) => prev.filter((link) => link.id !== linkId));
+    if (target?.folderId) {
+      setFolders((prev) =>
+        prev.map((folder) =>
+          folder.id === target.folderId ? { ...folder, count: Math.max(0, folder.count - 1) } : folder,
+        ),
+      );
+    }
+  };
+
   return (
     <div className="flex flex-1 flex-col bg-white dark:bg-[#191919]">
       <Header onCreateFolder={handleCreateFolder} />
@@ -61,7 +73,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               : "flex-1 overflow-y-auto px-8 py-8"
           }
         >
-          <AppDataProvider value={{ folders, links, createLink: handleCreateLink }}>
+          <AppDataProvider
+            value={{ folders, links, createLink: handleCreateLink, deleteLink: handleDeleteLink }}
+          >
             {children}
           </AppDataProvider>
         </main>

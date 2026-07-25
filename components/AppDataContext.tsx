@@ -16,6 +16,7 @@ type AppDataContextValue = {
   folders: Folder[];
   links: LinkItem[];
   createLink: (input: CreateLinkInput) => void;
+  deleteLink: (linkId: string) => void;
 };
 
 const AppDataContext = createContext<AppDataContextValue | null>(null);
