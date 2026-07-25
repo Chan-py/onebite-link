@@ -1,0 +1,91 @@
+import type { Folder, LinkItem } from "./types";
+
+export const folders: Folder[] = [
+  { id: "dev", name: "개발", count: 4 },
+  { id: "design", name: "디자인", count: 2 },
+  { id: "reading", name: "읽을거리", count: 3 },
+  { id: "food", name: "맛집", count: 1 },
+];
+
+export const links: LinkItem[] = [
+  {
+    id: "1",
+    title: "Next.js Documentation",
+    url: "https://nextjs.org/docs",
+    description: "Next.js 공식 문서. App Router와 최신 기능들을 확인할 수 있어요.",
+    folderId: "dev",
+    tag: "nextjs.org",
+  },
+  {
+    id: "2",
+    title: "Tailwind CSS",
+    url: "https://tailwindcss.com",
+    description: "유틸리티 우선 CSS 프레임워크로 빠르게 UI를 만들어보세요.",
+    folderId: "dev",
+    tag: "tailwindcss.com",
+  },
+  {
+    id: "3",
+    title: "MDN Web Docs",
+    url: "https://developer.mozilla.org",
+    description: "웹 표준 기술에 대한 가장 신뢰할 수 있는 레퍼런스 문서.",
+    folderId: "dev",
+    tag: "developer.mozilla.org",
+  },
+  {
+    id: "4",
+    title: "TypeScript Handbook",
+    url: "https://www.typescriptlang.org/docs/handbook",
+    description: "타입스크립트의 기본 개념부터 고급 타입까지 정리된 핸드북.",
+    folderId: "dev",
+    tag: "typescriptlang.org",
+  },
+  {
+    id: "5",
+    title: "Dribbble",
+    url: "https://dribbble.com",
+    description: "전 세계 디자이너들의 작업물을 구경하고 영감을 얻어보세요.",
+    folderId: "design",
+    tag: "dribbble.com",
+  },
+  {
+    id: "6",
+    title: "Coolors",
+    url: "https://coolors.co",
+    description: "몇 초 만에 예쁜 컬러 팔레트를 생성해주는 도구.",
+    folderId: "design",
+    tag: "coolors.co",
+  },
+  {
+    id: "7",
+    title: "매일경제 - 오늘의 뉴스",
+    url: "https://www.mk.co.kr",
+    description: "경제, 산업, IT 분야의 최신 뉴스를 한눈에 확인하세요.",
+    folderId: "reading",
+    tag: "mk.co.kr",
+  },
+  {
+    id: "8",
+    title: "요즘IT",
+    url: "https://yozm.wishket.com",
+    description: "개발자와 기획자를 위한 실무 인사이트 아티클 모음.",
+    folderId: "reading",
+    tag: "yozm.wishket.com",
+  },
+  {
+    id: "9",
+    title: "지금 써보는 뉴스레터",
+    url: "https://stibee.com",
+    description: "관심 분야의 뉴스레터를 구독하고 관리할 수 있는 서비스.",
+    folderId: "reading",
+    tag: "stibee.com",
+  },
+  {
+    id: "10",
+    title: "망원동 맛집 리스트",
+    url: "https://map.naver.com",
+    description: "망원동 근처에서 가볼 만한 맛집들을 모아둔 지도.",
+    folderId: "food",
+    tag: "map.naver.com",
+  },
+];
