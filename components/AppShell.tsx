@@ -33,6 +33,18 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null | undefined>(undefined);
   const userId = session?.user.id;
 
+  const [loadedUserId, setLoadedUserId] = useState(userId);
+  if (userId !== loadedUserId) {
+    setLoadedUserId(userId);
+    setFolders([]);
+    setLinks([]);
+  }
+
+  const foldersWithCounts = folders.map((folder) => ({
+    ...folder,
+    count: links.filter((link) => link.folderId === folder.id).length,
+  }));
+
   useEffect(() => {
     let cancelled = false;
 
@@ -61,8 +73,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   }, [isAuthPage, session, router]);
 
   useEffect(() => {
-    setFolders([]);
-
     if (!userId) return;
 
     let cancelled = false;
@@ -83,8 +93,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   }, [userId]);
 
   useEffect(() => {
-    setLinks([]);
-
     if (!userId) return;
 
     let cancelled = false;
@@ -175,13 +183,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     if (error || !data) throw error;
 
     setLinks((prev) => [{ id: String(data.id), ...input }, ...prev]);
-    if (input.folderId) {
-      setFolders((prev) =>
-        prev.map((folder) =>
-          folder.id === input.folderId ? { ...folder, count: folder.count + 1 } : folder,
-        ),
-      );
-    }
   };
 
   const handleDeleteLink = async (linkId: string) => {
@@ -192,15 +193,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const target = links.find((link) => link.id === linkId);
     setLinks((prev) => prev.filter((link) => link.id !== linkId));
-    if (target?.folderId) {
-      setFolders((prev) =>
-        prev.map((folder) =>
-          folder.id === target.folderId ? { ...folder, count: Math.max(0, folder.count - 1) } : folder,
-        ),
-      );
-    }
   };
 
   const handleEditLink = async (linkId: string, updates: EditLinkInput) => {
@@ -218,18 +211,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const target = links.find((link) => link.id === linkId);
     setLinks((prev) => prev.map((link) => (link.id === linkId ? { ...link, ...updates } : link)));
-
-    if (target && target.folderId !== updates.folderId) {
-      setFolders((prev) =>
-        prev.map((folder) => {
-          if (folder.id === target.folderId) return { ...folder, count: Math.max(0, folder.count - 1) };
-          if (folder.id === updates.folderId) return { ...folder, count: folder.count + 1 };
-          return folder;
-        }),
-      );
-    }
   };
 
   if (!isAuthPage && !session) {
@@ -247,7 +229,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       <div className="flex flex-1 items-center justify-center bg-white px-6 py-10 dark:bg-[#191919]">
         <AppDataProvider
           value={{
-            folders,
+            folders: foldersWithCounts,
             links,
             createLink: handleCreateLink,
             deleteLink: handleDeleteLink,
@@ -265,7 +247,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       <Header onCreateFolder={handleCreateFolder} />
       <div className="flex flex-1">
         <Sidebar
-          folders={folders}
+          folders={foldersWithCounts}
           activeFolderId={activeFolderId}
           onDeleteFolder={handleDeleteFolder}
           onEditFolder={handleEditFolder}
@@ -279,7 +261,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         >
           <AppDataProvider
             value={{
-              folders,
+              folders: foldersWithCounts,
               links,
               createLink: handleCreateLink,
               deleteLink: handleDeleteLink,
