@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { supabase } from "@/app/_lib/supabase";
 import { getLoginErrorMessage } from "@/app/_lib/authErrors";
 import AuthInput from "./AuthInput";
@@ -31,6 +32,17 @@ export default function LoginForm() {
     }
 
     router.push("/");
+  };
+
+  const handleKakaoLogin = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "kakao",
+      options: { redirectTo: `${window.location.origin}/` },
+    });
+
+    if (error) {
+      setToastMessage(getLoginErrorMessage(error));
+    }
   };
 
   return (
@@ -76,6 +88,20 @@ export default function LoginForm() {
           className="rounded-md bg-[#2F3437] px-4 py-2 text-sm font-medium text-white transition-colors duration-150 ease-in-out hover:bg-[#454341] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[#E9E9E7] dark:text-[#2F3437] dark:hover:bg-[#c9c9c7]"
         >
           {isSubmitting ? "로그인 중..." : "로그인"}
+        </button>
+
+        <button
+          type="button"
+          onClick={handleKakaoLogin}
+          className="flex w-full items-center justify-center"
+        >
+          <Image
+            src="/kakao_login_medium_wide.png"
+            alt="카카오로 로그인"
+            width={300}
+            height={45}
+            className="h-auto w-full"
+          />
         </button>
 
         <p className="text-center text-sm">
