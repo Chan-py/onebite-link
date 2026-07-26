@@ -48,7 +48,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     setFolders((prev) => [...prev, { id: String(data.id), name: data.name, count: 0 }]);
   };
 
-  const handleDeleteFolder = (folderId: string) => {
+  const handleDeleteFolder = async (folderId: string) => {
+    const { error } = await supabase.from("folders").delete().eq("id", folderId);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
     setFolders((prev) => prev.filter((folder) => folder.id !== folderId));
     if (folderId === activeFolderId) router.push("/");
   };
