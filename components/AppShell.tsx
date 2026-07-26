@@ -1,15 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import type { Folder, LinkItem } from "@/app/_lib/types";
-import { folders as initialFolders, links as initialLinks } from "@/app/_lib/mock-data";
+import { links as initialLinks } from "@/app/_lib/mock-data";
+import { supabase } from "@/app/_lib/supabase";
 import { AppDataProvider, type CreateLinkInput, type EditLinkInput } from "./AppDataContext";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
-  const [folders, setFolders] = useState<Folder[]>(initialFolders);
+  const [folders, setFolders] = useState<Folder[]>([]);
   const [links, setLinks] = useState<LinkItem[]>(initialLinks);
   const pathname = usePathname();
   const router = useRouter();
@@ -18,8 +19,33 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     ? pathname.split("/")[2]
     : "all";
 
-  const handleCreateFolder = (name: string) => {
-    setFolders((prev) => [...prev, { id: crypto.randomUUID(), name, count: 0 }]);
+  useEffect(() => {
+    let cancelled = false;
+
+    supabase
+      .from("folders")
+      .select("id, name")
+      .order("created_at", { ascending: true })
+      .then(({ data, error }) => {
+        if (cancelled || error || !data) return;
+        setFolders(data.map((row) => ({ id: String(row.id), name: row.name, count: 0 })));
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const handleCreateFolder = async (name: string) => {
+    const { data, error } = await supabase
+      .from("folders")
+      .insert({ name })
+      .select("id, name")
+      .single();
+
+    if (error || !data) throw error;
+
+    setFolders((prev) => [...prev, { id: String(data.id), name: data.name, count: 0 }]);
   };
 
   const handleDeleteFolder = (folderId: string) => {

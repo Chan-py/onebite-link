@@ -4,11 +4,13 @@ import { useEffect, useRef, useState } from "react";
 
 type NewFolderModalProps = {
   onClose: () => void;
-  onCreate: (name: string) => void;
+  onCreate: (name: string) => Promise<void>;
 };
 
 export default function NewFolderModal({ onClose, onCreate }: NewFolderModalProps) {
   const [name, setName] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -23,11 +25,21 @@ export default function NewFolderModal({ onClose, onCreate }: NewFolderModalProp
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    if (isSaving) return;
     const trimmed = name.trim();
     if (!trimmed) return;
-    onCreate(trimmed);
+
+    setIsSaving(true);
+    setError(null);
+    try {
+      await onCreate(trimmed);
+      onClose();
+    } catch {
+      setError("폴더를 추가하지 못했습니다. 다시 시도해주세요.");
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -60,6 +72,11 @@ export default function NewFolderModal({ onClose, onCreate }: NewFolderModalProp
             placeholder="폴더 이름을 입력하세요"
             className="rounded-md border border-[rgba(55,53,47,0.16)] bg-white px-3 py-2 text-sm text-[#37352F] outline-none transition-colors duration-150 ease-in-out placeholder:text-[rgba(55,53,47,0.4)] focus:border-[#2383E2] focus:shadow-[0_0_0_1px_#2383E2] dark:border-[rgba(255,255,255,0.09)] dark:bg-[#252525] dark:text-[#E9E9E7] dark:placeholder:text-[rgba(255,255,255,0.4)] dark:focus:border-[#5AA7E4] dark:focus:shadow-[0_0_0_1px_#5AA7E4]"
           />
+          {error && (
+            <p className="text-sm text-red-500" role="alert">
+              {error}
+            </p>
+          )}
         </div>
         <div className="flex items-center justify-end gap-2 border-t border-[rgba(55,53,47,0.09)] pt-5 dark:border-[rgba(255,255,255,0.09)]">
           <button
@@ -71,10 +88,10 @@ export default function NewFolderModal({ onClose, onCreate }: NewFolderModalProp
           </button>
           <button
             type="submit"
-            disabled={!name.trim()}
+            disabled={!name.trim() || isSaving}
             className="rounded-md bg-[#2F3437] px-4 py-2 text-sm font-medium text-white transition-colors duration-150 ease-in-out hover:bg-[#454341] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[#E9E9E7] dark:text-[#2F3437] dark:hover:bg-[#c9c9c7]"
           >
-            저장
+            {isSaving ? "저장 중..." : "저장"}
           </button>
         </div>
       </form>

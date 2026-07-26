@@ -5,16 +5,11 @@ import Link from "next/link";
 import NewFolderModal from "./NewFolderModal";
 
 type HeaderProps = {
-  onCreateFolder: (name: string) => void;
+  onCreateFolder: (name: string) => Promise<void>;
 };
 
 export default function Header({ onCreateFolder }: HeaderProps) {
   const [isFolderModalOpen, setIsFolderModalOpen] = useState(false);
-
-  const handleCreateFolder = (name: string) => {
-    onCreateFolder(name);
-    setIsFolderModalOpen(false);
-  };
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between border-b border-[rgba(55,53,47,0.09)] px-6 dark:border-[rgba(255,255,255,0.09)]">
@@ -42,7 +37,7 @@ export default function Header({ onCreateFolder }: HeaderProps) {
       {isFolderModalOpen && (
         <NewFolderModal
           onClose={() => setIsFolderModalOpen(false)}
-          onCreate={handleCreateFolder}
+          onCreate={onCreateFolder}
         />
       )}
     </header>
