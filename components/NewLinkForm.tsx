@@ -34,7 +34,7 @@ export default function NewLinkForm() {
       }
       const og = await response.json();
 
-      createLink({
+      await createLink({
         url: og.url,
         title: og.title,
         description: og.description,

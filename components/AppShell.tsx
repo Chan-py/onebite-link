@@ -3,15 +3,22 @@
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import type { Folder, LinkItem } from "@/app/_lib/types";
-import { links as initialLinks } from "@/app/_lib/mock-data";
 import { supabase } from "@/app/_lib/supabase";
 import { AppDataProvider, type CreateLinkInput, type EditLinkInput } from "./AppDataContext";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 
+function hostnameTag(url: string): string {
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return url;
+  }
+}
+
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [folders, setFolders] = useState<Folder[]>([]);
-  const [links, setLinks] = useState<LinkItem[]>(initialLinks);
+  const [links, setLinks] = useState<LinkItem[]>([]);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -29,6 +36,33 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       .then(({ data, error }) => {
         if (cancelled || error || !data) return;
         setFolders(data.map((row) => ({ id: String(row.id), name: row.name, count: 0 })));
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    supabase
+      .from("links")
+      .select("id, url, title, description, thumbnail_url, folder_id")
+      .order("created_at", { ascending: false })
+      .then(({ data, error }) => {
+        if (cancelled || error || !data) return;
+        setLinks(
+          data.map((row) => ({
+            id: String(row.id),
+            url: row.url,
+            title: row.title ?? "",
+            description: row.description ?? "",
+            thumbnail: row.thumbnail_url,
+            folderId: row.folder_id ? String(row.folder_id) : "",
+            tag: hostnameTag(row.url),
+          })),
+        );
       });
 
     return () => {
@@ -76,8 +110,22 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     );
   };
 
-  const handleCreateLink = (input: CreateLinkInput) => {
-    setLinks((prev) => [{ id: crypto.randomUUID(), ...input }, ...prev]);
+  const handleCreateLink = async (input: CreateLinkInput) => {
+    const { data, error } = await supabase
+      .from("links")
+      .insert({
+        url: input.url,
+        title: input.title || null,
+        description: input.description || null,
+        thumbnail_url: input.thumbnail,
+        folder_id: input.folderId ? Number(input.folderId) : null,
+      })
+      .select("id")
+      .single();
+
+    if (error || !data) throw error;
+
+    setLinks((prev) => [{ id: String(data.id), ...input }, ...prev]);
     if (input.folderId) {
       setFolders((prev) =>
         prev.map((folder) =>

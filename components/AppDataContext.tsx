@@ -21,7 +21,7 @@ export type EditLinkInput = {
 type AppDataContextValue = {
   folders: Folder[];
   links: LinkItem[];
-  createLink: (input: CreateLinkInput) => void;
+  createLink: (input: CreateLinkInput) => Promise<void>;
   deleteLink: (linkId: string) => void;
   editLink: (linkId: string, updates: EditLinkInput) => void;
 };
