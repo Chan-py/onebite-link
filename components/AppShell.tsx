@@ -17,6 +17,8 @@ function hostnameTag(url: string): string {
   }
 }
 
+const AUTH_PAGES = ["/login", "/signup", "/forgot-password", "/reset-password"];
+
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [folders, setFolders] = useState<Folder[]>([]);
   const [links, setLinks] = useState<LinkItem[]>([]);
@@ -27,7 +29,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     ? pathname.split("/")[2]
     : "all";
 
-  const isAuthPage = pathname === "/login" || pathname === "/signup";
+  const isAuthPage = AUTH_PAGES.includes(pathname);
   const [session, setSession] = useState<Session | null | undefined>(undefined);
 
   useEffect(() => {

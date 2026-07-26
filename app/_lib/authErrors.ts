@@ -24,3 +24,27 @@ export function getLoginErrorMessage(error: { message: string }): string {
   const known = KNOWN_LOGIN_ERRORS.find(({ match }) => lowered.includes(match));
   return known?.message ?? "로그인에 실패했어요. 잠시 후 다시 시도해주세요.";
 }
+
+const KNOWN_FORGOT_PASSWORD_ERRORS: Array<{ match: string; message: string }> = [
+  { match: "unable to validate email", message: "이메일 형식이 올바르지 않습니다." },
+  { match: "invalid email", message: "이메일 형식이 올바르지 않습니다." },
+  { match: "security purposes", message: "잠시 후 다시 시도해주세요." },
+];
+
+export function getForgotPasswordErrorMessage(error: { message: string }): string {
+  const lowered = error.message.toLowerCase();
+  const known = KNOWN_FORGOT_PASSWORD_ERRORS.find(({ match }) => lowered.includes(match));
+  return known?.message ?? "링크 발송에 실패했어요. 잠시 후 다시 시도해주세요.";
+}
+
+const KNOWN_RESET_PASSWORD_ERRORS: Array<{ match: string; message: string }> = [
+  { match: "password should be at least", message: "비밀번호는 최소 6자 이상이어야 합니다." },
+  { match: "auth session missing", message: "링크가 만료되었거나 유효하지 않습니다. 비밀번호 찾기를 다시 요청해주세요." },
+  { match: "same_password", message: "이전과 다른 비밀번호를 입력해주세요." },
+];
+
+export function getResetPasswordErrorMessage(error: { message: string }): string {
+  const lowered = error.message.toLowerCase();
+  const known = KNOWN_RESET_PASSWORD_ERRORS.find(({ match }) => lowered.includes(match));
+  return known?.message ?? "비밀번호 재설정에 실패했어요. 링크를 다시 요청해주세요.";
+}

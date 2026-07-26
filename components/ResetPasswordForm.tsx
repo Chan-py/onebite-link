@@ -2,30 +2,34 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { supabase } from "@/app/_lib/supabase";
-import { getLoginErrorMessage } from "@/app/_lib/authErrors";
+import { getResetPasswordErrorMessage } from "@/app/_lib/authErrors";
 import AuthInput from "./AuthInput";
 import Toast from "./Toast";
 
-export default function LoginForm() {
+export default function ResetPasswordForm() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  const isFormFilled = email.trim() !== "" && password.trim() !== "";
+  const isFormFilled = password.trim() !== "" && passwordConfirm.trim() !== "";
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    if (password !== passwordConfirm) {
+      setToastMessage("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
     setIsSubmitting(true);
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.updateUser({ password });
 
     if (error) {
-      setToastMessage(getLoginErrorMessage(error));
+      setToastMessage(getResetPasswordErrorMessage(error));
       setIsSubmitting(false);
       return;
     }
@@ -47,26 +51,30 @@ export default function LoginForm() {
           한입 링크
         </h1>
 
+        <p className="text-center text-sm text-[rgba(55,53,47,0.65)] dark:text-[rgba(255,255,255,0.6)]">
+          새로운 비밀번호를 입력해주세요.
+        </p>
+
         <div className="flex flex-col gap-4">
-          <AuthInput
-            id="email"
-            name="email"
-            type="email"
-            label="이메일"
-            placeholder="you@example.com"
-            autoComplete="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-          />
           <AuthInput
             id="password"
             name="password"
             type="password"
-            label="비밀번호"
-            placeholder="비밀번호를 입력하세요"
-            autoComplete="current-password"
+            label="새 비밀번호"
+            placeholder="새 비밀번호를 입력하세요"
+            autoComplete="new-password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
+          />
+          <AuthInput
+            id="passwordConfirm"
+            name="passwordConfirm"
+            type="password"
+            label="새 비밀번호 확인"
+            placeholder="비밀번호를 다시 입력하세요"
+            autoComplete="new-password"
+            value={passwordConfirm}
+            onChange={(event) => setPasswordConfirm(event.target.value)}
           />
         </div>
 
@@ -75,27 +83,8 @@ export default function LoginForm() {
           disabled={!isFormFilled || isSubmitting}
           className="rounded-md bg-[#2F3437] px-4 py-2 text-sm font-medium text-white transition-colors duration-150 ease-in-out hover:bg-[#454341] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[#E9E9E7] dark:text-[#2F3437] dark:hover:bg-[#c9c9c7]"
         >
-          {isSubmitting ? "로그인 중..." : "로그인"}
+          {isSubmitting ? "변경 중..." : "비밀번호 변경"}
         </button>
-
-        <p className="text-center text-sm">
-          <Link
-            href="/forgot-password"
-            className="font-medium text-[#2383E2] transition-colors duration-150 ease-in-out hover:text-[#0B6FCA] dark:text-[#5AA7E4] dark:hover:text-[#7FBBEA]"
-          >
-            비밀번호를 잊으셨나요?
-          </Link>
-        </p>
-
-        <p className="text-center text-sm text-[rgba(55,53,47,0.65)] dark:text-[rgba(255,255,255,0.6)]">
-          계정이 없으신가요?{" "}
-          <Link
-            href="/signup"
-            className="font-medium text-[#2383E2] transition-colors duration-150 ease-in-out hover:text-[#0B6FCA] dark:text-[#5AA7E4] dark:hover:text-[#7FBBEA]"
-          >
-            회원가입
-          </Link>
-        </p>
       </form>
     </>
   );
