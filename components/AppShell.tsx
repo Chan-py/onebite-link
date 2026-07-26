@@ -147,7 +147,21 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const handleEditLink = (linkId: string, updates: EditLinkInput) => {
+  const handleEditLink = async (linkId: string, updates: EditLinkInput) => {
+    const { error } = await supabase
+      .from("links")
+      .update({
+        title: updates.title || null,
+        description: updates.description || null,
+        folder_id: updates.folderId ? Number(updates.folderId) : null,
+      })
+      .eq("id", linkId);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
     const target = links.find((link) => link.id === linkId);
     setLinks((prev) => prev.map((link) => (link.id === linkId ? { ...link, ...updates } : link)));
 
