@@ -135,7 +135,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const handleDeleteLink = (linkId: string) => {
+  const handleDeleteLink = async (linkId: string) => {
+    const { error } = await supabase.from("links").delete().eq("id", linkId);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
     const target = links.find((link) => link.id === linkId);
     setLinks((prev) => prev.filter((link) => link.id !== linkId));
     if (target?.folderId) {
