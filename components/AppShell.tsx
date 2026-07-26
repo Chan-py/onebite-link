@@ -31,6 +31,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   const isAuthPage = AUTH_PAGES.includes(pathname);
   const [session, setSession] = useState<Session | null | undefined>(undefined);
+  const userId = session?.user.id;
 
   useEffect(() => {
     let cancelled = false;
@@ -60,11 +61,16 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   }, [isAuthPage, session, router]);
 
   useEffect(() => {
+    setFolders([]);
+
+    if (!userId) return;
+
     let cancelled = false;
 
     supabase
       .from("folders")
       .select("id, name")
+      .eq("user_id", userId)
       .order("created_at", { ascending: true })
       .then(({ data, error }) => {
         if (cancelled || error || !data) return;
@@ -74,14 +80,19 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
+    setLinks([]);
+
+    if (!userId) return;
+
     let cancelled = false;
 
     supabase
       .from("links")
       .select("id, url, title, description, thumbnail_url, folder_id")
+      .eq("user_id", userId)
       .order("created_at", { ascending: false })
       .then(({ data, error }) => {
         if (cancelled || error || !data) return;
@@ -101,12 +112,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [userId]);
 
   const handleCreateFolder = async (name: string) => {
+    if (!session) return;
+
     const { data, error } = await supabase
       .from("folders")
-      .insert({ name })
+      .insert({ name, user_id: session.user.id })
       .select("id, name")
       .single();
 
@@ -144,6 +157,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   };
 
   const handleCreateLink = async (input: CreateLinkInput) => {
+    if (!session) return;
+
     const { data, error } = await supabase
       .from("links")
       .insert({
@@ -152,6 +167,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         description: input.description || null,
         thumbnail_url: input.thumbnail,
         folder_id: input.folderId ? Number(input.folderId) : null,
+        user_id: session.user.id,
       })
       .select("id")
       .single();
