@@ -53,7 +53,17 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     if (folderId === activeFolderId) router.push("/");
   };
 
-  const handleEditFolder = (folderId: string, name: string) => {
+  const handleEditFolder = async (folderId: string, name: string) => {
+    const { error } = await supabase
+      .from("folders")
+      .update({ name })
+      .eq("id", folderId);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
     setFolders((prev) =>
       prev.map((folder) => (folder.id === folderId ? { ...folder, name } : folder)),
     );
