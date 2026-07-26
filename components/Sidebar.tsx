@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import type { Folder } from "@/app/_lib/types";
+import { supabase } from "@/app/_lib/supabase";
 import FolderItem from "./FolderItem";
 import DeleteFolderModal from "./DeleteFolderModal";
 import EditFolderModal from "./EditFolderModal";
@@ -34,6 +35,10 @@ export default function Sidebar({
     setFolderToEdit(null);
   };
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
+
   return (
     <aside className="flex w-60 shrink-0 flex-col gap-1 border-r border-[rgba(55,53,47,0.09)] bg-[#F7F6F3] px-3 py-6 dark:border-[rgba(255,255,255,0.09)] dark:bg-[#202020]">
       <Link
@@ -57,6 +62,13 @@ export default function Sidebar({
           />
         ))}
       </div>
+      <button
+        type="button"
+        onClick={handleLogout}
+        className="mt-auto rounded-md px-3 py-1.5 text-left text-sm font-medium text-[rgba(55,53,47,0.65)] transition-colors duration-150 ease-in-out hover:bg-[#EDEDEB] dark:text-[rgba(255,255,255,0.6)] dark:hover:bg-[#2A2A2A]"
+      >
+        로그아웃
+      </button>
       {folderToDelete && (
         <DeleteFolderModal
           folder={folderToDelete}
