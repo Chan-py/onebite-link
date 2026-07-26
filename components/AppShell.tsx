@@ -18,6 +18,7 @@ function hostnameTag(url: string): string {
 }
 
 const AUTH_PAGES = ["/login", "/signup", "/forgot-password", "/reset-password"];
+const PUBLIC_PAGES = ["/privacy"];
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [folders, setFolders] = useState<Folder[]>([]);
@@ -30,6 +31,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     : "all";
 
   const isAuthPage = AUTH_PAGES.includes(pathname);
+  const isPublicPage = PUBLIC_PAGES.includes(pathname);
   const [session, setSession] = useState<Session | null | undefined>(undefined);
   const userId = session?.user.id;
 
@@ -67,10 +69,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!isAuthPage && session === null) {
+    if (!isAuthPage && !isPublicPage && session === null) {
       router.replace("/login");
     }
-  }, [isAuthPage, session, router]);
+  }, [isAuthPage, isPublicPage, session, router]);
 
   useEffect(() => {
     if (!userId) return;
@@ -213,6 +215,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
     setLinks((prev) => prev.map((link) => (link.id === linkId ? { ...link, ...updates } : link)));
   };
+
+  if (isPublicPage) {
+    return <div className="flex flex-1 flex-col bg-white">{children}</div>;
+  }
 
   if (!isAuthPage && !session) {
     return (

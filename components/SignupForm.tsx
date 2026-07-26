@@ -104,6 +104,16 @@ export default function SignupForm() {
             로그인
           </Link>
         </p>
+        <p className="text-center text-xs text-[rgba(55,53,47,0.4)] dark:text-[rgba(255,255,255,0.4)]">
+          가입 시{" "}
+          <Link
+            href="/privacy"
+            className="underline transition-colors duration-150 ease-in-out hover:text-[rgba(55,53,47,0.65)] dark:hover:text-[rgba(255,255,255,0.6)]"
+          >
+            개인정보 처리방침
+          </Link>
+          에 동의하게 됩니다.
+        </p>
       </form>
     </>
   );
