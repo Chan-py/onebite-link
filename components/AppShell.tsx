@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import type { Session } from "@supabase/supabase-js";
 import type { Folder, LinkItem } from "@/app/_lib/types";
 import { supabase } from "@/app/_lib/supabase";
 import { AppDataProvider, type CreateLinkInput, type EditLinkInput } from "./AppDataContext";
@@ -27,6 +28,34 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     : "all";
 
   const isAuthPage = pathname === "/login" || pathname === "/signup";
+  const [session, setSession] = useState<Session | null | undefined>(undefined);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    supabase.auth.getSession().then(({ data }) => {
+      if (cancelled) return;
+      setSession(data.session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      if (cancelled) return;
+      setSession(nextSession);
+    });
+
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isAuthPage && session === null) {
+      router.replace("/login");
+    }
+  }, [isAuthPage, session, router]);
 
   useEffect(() => {
     let cancelled = false;
@@ -184,6 +213,16 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       );
     }
   };
+
+  if (!isAuthPage && !session) {
+    return (
+      <div className="flex flex-1 items-center justify-center bg-white dark:bg-[#191919]">
+        <p className="text-sm text-[rgba(55,53,47,0.65)] dark:text-[rgba(255,255,255,0.6)]">
+          불러오는 중...
+        </p>
+      </div>
+    );
+  }
 
   if (isAuthPage) {
     return (
