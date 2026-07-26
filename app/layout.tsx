@@ -13,9 +13,32 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_NAME = "한입 링크";
+const SITE_DESCRIPTION = "링크를 한입 크기로 저장하고 정리하는 곳";
+
 export const metadata: Metadata = {
-  title: "한입 링크",
-  description: "링크를 한입 크기로 저장하고 정리하는 곳",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
+  ),
+  title: {
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    siteName: SITE_NAME,
+    images: ["/thumbnail.png"],
+    locale: "ko_KR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    images: ["/thumbnail.png"],
+  },
 };
 
 export default function RootLayout({
