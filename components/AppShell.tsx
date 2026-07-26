@@ -26,6 +26,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     ? pathname.split("/")[2]
     : "all";
 
+  const isAuthPage = pathname === "/login" || pathname === "/signup";
+
   useEffect(() => {
     let cancelled = false;
 
@@ -182,6 +184,24 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       );
     }
   };
+
+  if (isAuthPage) {
+    return (
+      <div className="flex flex-1 items-center justify-center bg-white px-6 py-10 dark:bg-[#191919]">
+        <AppDataProvider
+          value={{
+            folders,
+            links,
+            createLink: handleCreateLink,
+            deleteLink: handleDeleteLink,
+            editLink: handleEditLink,
+          }}
+        >
+          {children}
+        </AppDataProvider>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-1 flex-col bg-white dark:bg-[#191919]">
